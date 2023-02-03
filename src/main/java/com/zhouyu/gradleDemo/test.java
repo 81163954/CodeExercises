@@ -1,9 +1,7 @@
 package com.zhouyu.gradleDemo;
 
 import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.LockSupport;
 
 public class test {
     static volatile int n = 0;
@@ -12,22 +10,51 @@ public class test {
     public static void main(String[] args) throws BrokenBarrierException, InterruptedException {
         Thread t1 = new Thread(() -> {
 
-            System.out.println("t1 start");
+        });
+        t1.start();
+
+
+        MyContainer myContainer = new MyContainer();
+        Thread thread = new Thread(()->{
             try {
-                TimeUnit.SECONDS.sleep(5);
+                myContainer.put();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            LockSupport.park();
-
-            System.out.println("t1 stop");
         });
-        t1.start();
-        LockSupport.unpark(t1);
+        Thread thread1 = new Thread(() -> {
+            try {
+                myContainer.get();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        thread1.start();
+        thread.start();
+        for (int i = 0; i < 5; i++) {
+            System.out.println(i);
+            TimeUnit.SECONDS.sleep(1);
+        }
+        myContainer.callAll();
+    }
 
 
-        CountDownLatch countDownLatch = new CountDownLatch(2);
 
+}
+class MyContainer{
 
+    public synchronized void put() throws InterruptedException {
+        this.wait();
+        System.out.println("put end");
+    }
+
+    public synchronized void get() throws InterruptedException {
+        this.wait();
+        System.out.println("get end");
+    }
+
+    public synchronized void callAll(){
+        this.notify(); //一个notify叫醒一个thread
+        this.notify();
     }
 }
