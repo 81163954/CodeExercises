@@ -16,6 +16,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+//	implementation 'org.apache.rocketmq:rocketmq-client-java:5.0.4'
+
+	implementation 'io.netty:netty-all:4.1.6.Final'
 }
 
 tasks.named('test') {
